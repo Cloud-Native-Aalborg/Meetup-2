@@ -1,6 +1,6 @@
 # Meetup-2
 
-[![Build Status](https://cloud.drone.io/api/badges/Cloud-Native-Aalborg/Meetup-1/status.svg)](https://cloud.drone.io/Cloud-Native-Aalborg/Meetup-1)
+[![Build Status](https://cloud.drone.io/api/badges/Cloud-Native-Aalborg/Meetup-2/status.svg)](https://cloud.drone.io/Cloud-Native-Aalborg/Meetup-2)
 
 This document contains the commands used in the kubernetes in 10 minutes presentation.
 Feel free to let me know if you have improvments or catch any typos.
@@ -128,7 +128,7 @@ kubectl create ns flux
 fluxctl install \
 --git-user=mejlholm \
 --git-email=mejlholm@users.noreply.github.com \
---git-url=git@github.com:Cloud-Native-Aalborg/Meetup-1 \
+--git-url=git@github.com:Cloud-Native-Aalborg/Meetup-2 \
 --git-paths=namespaces,wisdom-frontend/deploy,wisdom-service/deploy \
 --namespace=flux | kubectl apply -f -
 
@@ -152,13 +152,13 @@ Below you find links to the things we've used in this demo:
 
 - https://quarkus.io/
 
-- https://github.com/Cloud-Native-Aalborg/Meetup-1
+- https://github.com/Cloud-Native-Aalborg/Meetup-2
 
 - https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/
 
 - https://fluxcd.io/
 
-- https://cloud.drone.io/Cloud-Native-Aalborg/Meetup-1/
+- https://cloud.drone.io/Cloud-Native-Aalborg/Meetup-2/
 
 # About
 Arne Mejlholm, Java developer at Spar Nord. Driving the adoptation of docker/kubernetes and a lot more 
