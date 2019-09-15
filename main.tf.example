@@ -1,0 +1,91 @@
+############## Variables ###############
+# Token variable
+variable "hcloud_token" {
+  default = "<hetzner_cloud_token_goes_here>"
+}
+
+# Define Hetzner provider
+provider "hcloud" {
+  token = "${var.hcloud_token}"
+}
+
+# Obtain ssh key data
+data "hcloud_ssh_key" "ssh_key" {
+  fingerprint = "<ssh_key_goes_here>"
+}
+
+# Create Debian 10 server
+resource "hcloud_server" "server-1" {
+  name = "server-1"
+  image = "debian-10"
+  server_type = "cx11"
+  ssh_keys  = ["${data.hcloud_ssh_key.ssh_key.id}"]
+
+  provisioner "local-exec" {
+    command = "sleep 60 && k3sup install --ip ${hcloud_server.server-1.ipv4_address} && mv kubeconfig ~/.kube/config"
+  }
+
+  provisioner "local-exec" {
+    command = "kubectl create ns apps"
+  }
+
+  provisioner "local-exec" {
+    command = "kubectl create secret generic wisdom-service-secret -n apps --from-env-file=secret.env"
+  }
+
+  provisioner "local-exec" {
+    command = "kubectl create ns flux"
+  }
+
+  provisioner "local-exec" {
+    command = "fluxctl install --git-user=mejlholm --git-email=mejlholm@users.noreply.github.com --git-url=git@github.com:Cloud-Native-Aalborg/Meetup-2 --git-paths=namespaces,wisdom-frontend/deploy,wisdom-service/deploy --namespace=flux | kubectl apply -f - "
+  }
+
+  provisioner "local-exec" {
+    command = "kubectl patch deployments -n flux flux --type='json' -p='[{\"op\": \"add\", \"path\": \"/spec/template/spec/containers/0/args/-\", \"value\": \"--git-ci-skip\"}]'"
+  }
+
+}
+
+# Create Debian 10 server
+resource "hcloud_server" "server-2" {
+  name = "server-2"
+  image = "debian-10"
+  server_type = "cx11"
+  ssh_keys  = ["${data.hcloud_ssh_key.ssh_key.id}"]
+
+  provisioner "local-exec" {
+    command = "sleep 60 && k3sup join --ip ${hcloud_server.server-2.ipv4_address} --server-ip ${hcloud_server.server-1.ipv4_address}"
+  }
+}
+
+# Create Debian 10 server
+resource "hcloud_server" "server-3" {
+  name = "server-3"
+  image = "debian-10"
+  server_type = "cx11"
+  ssh_keys  = ["${data.hcloud_ssh_key.ssh_key.id}"]
+
+  provisioner "local-exec" {
+    command = "sleep 60 && k3sup join --ip ${hcloud_server.server-3.ipv4_address} --server-ip ${hcloud_server.server-1.ipv4_address}"
+  }
+}
+
+# Output server IPs
+output "server_ip_server-1" {
+  value = "${hcloud_server.server-1.ipv4_address}"
+}
+
+# Output server IPs
+output "server_ip_server-2" {
+  value = "${hcloud_server.server-2.ipv4_address}"
+}
+
+# Output server IPs
+output "server_ip_server-3" {
+  value = "${hcloud_server.server-3.ipv4_address}"
+}
+
+output "fluxcmd" {
+  value = "fluxctl identity --k8s-fwd-ns flux"
+}
