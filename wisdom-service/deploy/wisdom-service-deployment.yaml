@@ -7,7 +7,7 @@ metadata:
   labels:
     app: wisdom-service
   annotations:
-    fluxcd.io/tag.wisdom-frontend: glob:1.*
+    fluxcd.io/tag.wisdom-frontend: glob:2.*
     fluxcd.io/automated: 'true'
 spec:
   replicas: 2
@@ -20,12 +20,13 @@ spec:
       labels:
         app: wisdom-service
       annotations:
+        linkerd.io/inject: enabled
         prometheus.io/scrape: 'true'
         prometheus.io/port: '8081'
     spec:
       containers:
       - name: wisdom-service
-        image: mejlholm/wisdom-service:1.0.2
+        image: mejlholm/wisdom-service:2.0.2
         envFrom:
         - secretRef:
             name: wisdom-service-secret

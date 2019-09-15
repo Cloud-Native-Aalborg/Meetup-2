@@ -14,7 +14,7 @@ steps:
       context: wisdom-service
       tags:
         - latest
-        - 1.0.${DRONE_BUILD_NUMBER}
+        - 2.0.${DRONE_BUILD_NUMBER}
 
   - name: build-wisdom-frontend
     image: plugins/docker
@@ -28,7 +28,7 @@ steps:
       context: wisdom-frontend
       tags:
         - latest
-        - 1.0.${DRONE_BUILD_NUMBER}
+        - 2.0.${DRONE_BUILD_NUMBER}
 
   - name: notify
     image: plugins/slack

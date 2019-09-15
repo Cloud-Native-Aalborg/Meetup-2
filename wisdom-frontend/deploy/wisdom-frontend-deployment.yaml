@@ -7,7 +7,7 @@ metadata:
   labels:
     app: wisdom-frontend
   annotations:
-    fluxcd.io/tag.wisdom-frontend: glob:1.*
+    fluxcd.io/tag.wisdom-frontend: glob:2.*
     fluxcd.io/automated: 'true'
 spec:
   replicas: 2
@@ -20,12 +20,13 @@ spec:
       labels:
         app: wisdom-frontend
       annotations:
+        linkerd.io/inject: enabled
         prometheus.io/scrape: 'true'
         prometheus.io/port: '8080'
     spec:
       containers:
       - name: wisdom-frontend
-        image: mejlholm/wisdom-frontend:1.0.2
+        image: mejlholm/wisdom-frontend:2.0.2
         resources:
           limits:
             memory: "256Mi"
