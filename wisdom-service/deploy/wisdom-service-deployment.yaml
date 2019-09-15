@@ -25,7 +25,7 @@ spec:
     spec:
       containers:
       - name: wisdom-service
-        image: mejlholm/wisdom-service:1.0.1
+        image: mejlholm/wisdom-service:1.0.2
         envFrom:
         - secretRef:
             name: wisdom-service-secret
