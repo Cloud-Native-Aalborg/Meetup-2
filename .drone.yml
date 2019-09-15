@@ -1,0 +1,45 @@
+kind: pipeline
+name: default
+
+steps:
+  - name: build-wisdom-service
+    image: plugins/docker
+    settings:
+      repo: mejlholm/wisdom-service
+      username:
+        from_secret: docker_hub_username
+      password:
+        from_secret: docker_hub_password
+      dockerfile: wisdom-service/Dockerfile
+      context: wisdom-service
+      tags:
+        - latest
+        - 1.0.${DRONE_BUILD_NUMBER}
+
+  - name: build-wisdom-frontend
+    image: plugins/docker
+    settings:
+      repo: mejlholm/wisdom-frontend
+      username:
+        from_secret: docker_hub_username
+      password:
+        from_secret: docker_hub_password
+      dockerfile: wisdom-frontend/Dockerfile
+      context: wisdom-frontend
+      tags:
+        - latest
+        - 1.0.${DRONE_BUILD_NUMBER}
+
+  - name: notify
+    image: plugins/slack
+    settings:
+      webhook:
+        from_secret: slack_webhook
+    depends_on:
+      - build-wisdom-service
+      - build-wisdom-frontend
+
+trigger:
+  event:
+    exclude:
+    - tag

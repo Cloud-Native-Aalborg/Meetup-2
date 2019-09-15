@@ -1,0 +1,15 @@
+---
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: wisdom-frontend
+  namespace: apps
+spec:
+  rules:
+  - host: wisdom.mejlholm.org
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: wisdom-frontend
+          servicePort: 8080

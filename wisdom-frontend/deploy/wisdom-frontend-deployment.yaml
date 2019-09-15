@@ -1,0 +1,52 @@
+---
+kind: Deployment
+apiVersion: apps/v1beta2
+metadata:
+  name: wisdom-frontend
+  namespace: apps
+  labels:
+    app: wisdom-frontend
+  annotations:
+    fluxcd.io/tag.wisdom-frontend: glob:1.*
+    fluxcd.io/automated: 'true'
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: wisdom-frontend
+  template:
+    metadata:
+      name: wisdom-frontend
+      labels:
+        app: wisdom-frontend
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '8080'
+    spec:
+      containers:
+      - name: wisdom-frontend
+        image: mejlholm/wisdom-frontend:1.0.127
+        resources:
+          limits:
+            memory: "256Mi"
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 2
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 1
+          periodSeconds: 1
+          successThreshold: 2
+          timeoutSeconds: 5

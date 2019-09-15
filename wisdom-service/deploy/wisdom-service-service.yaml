@@ -1,0 +1,14 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: wisdom-service
+  namespace: apps
+spec:
+  selector:
+    app: wisdom-service
+  ports:
+    - name: default
+      port: 8081
+      protocol: TCP
+      targetPort: 8081
