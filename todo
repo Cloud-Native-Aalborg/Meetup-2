@@ -5,4 +5,3 @@ todo:
  - drone in cluster
  - drone docker use cache
  - observability (grafana, prometheus, jaeger)
- - terraform avoid sleep and detect when nodes are up
