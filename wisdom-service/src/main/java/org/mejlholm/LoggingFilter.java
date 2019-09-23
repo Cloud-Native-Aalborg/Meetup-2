@@ -1,8 +1,10 @@
 package org.mejlholm;
 
 
+import io.opentracing.Tracer;
 import org.jboss.logging.Logger;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -22,6 +24,9 @@ public class LoggingFilter implements ContainerRequestFilter {
     @Context
     HttpServletRequest request;
 
+    @Inject
+    Tracer tracer;
+
     @Override
     public void filter(ContainerRequestContext context) {
 
@@ -30,5 +35,7 @@ public class LoggingFilter implements ContainerRequestFilter {
         final String address = request.getRemoteAddr();
 
         LOG.infof("Request %s %s from IP %s", method, path, address);
+
+        tracer.activeSpan().setBaggageItem("method", method).setBaggageItem("path", path).setBaggageItem("address", address);
     }
 }
