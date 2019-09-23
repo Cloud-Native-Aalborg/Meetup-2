@@ -11,5 +11,5 @@ spec:
       paths:
       - path: /
         backend:
-          serviceName: wisdom-frontend
+          serviceName: wisdom-frontend.apps
           servicePort: 8080
