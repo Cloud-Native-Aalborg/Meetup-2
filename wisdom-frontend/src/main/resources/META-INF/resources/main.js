@@ -1,7 +1,7 @@
 $(document).ready(function(){
     getQuote();
 
-    $("#newButton").click(getQuote());
+    $("#newButton").on("click", getQuote);
 });
 
 
