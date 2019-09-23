@@ -37,6 +37,7 @@ class TwitterScheduler {
     @PostConstruct
     private void init() {
         cb = new ConfigurationBuilder()
+                .setIncludeMyRetweetEnabled(false)
                 .setOAuthConsumerKey(consumerKey)
                 .setOAuthConsumerSecret(consumerSecret)
                 .setOAuthAccessToken(accessToken)
