@@ -36,6 +36,6 @@ public class LoggingFilter implements ContainerRequestFilter {
 
         LOG.infof("Request %s %s from IP %s", method, path, address);
 
-        tracer.activeSpan().setBaggageItem("method", method).setBaggageItem("path", path).setBaggageItem("address", address);
+        tracer.activeSpan().setTag("method", method).setTag("path", path).setTag("address", address);
     }
 }
