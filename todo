@@ -1,10 +1,5 @@
-
 todo:
 ------
 
  - drone in cluster
- - drone docker use cache
-
-
- - jaeger endpoints
- - observability (grafana, prometheus, jaeger)
+ -

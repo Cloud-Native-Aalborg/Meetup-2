@@ -15,6 +15,7 @@ import javax.enterprise.context.ApplicationScoped;
 import java.util.Random;
 
 @ApplicationScoped
+@Traced
 class TwitterScheduler {
 
     @ConfigProperty(name = "CONSUMER_KEY")
@@ -43,7 +44,6 @@ class TwitterScheduler {
     }
 
     @Scheduled(every = "1h")
-    @Traced
     void scheduleGetTweets() throws TwitterException {
         Twitter twitter = new TwitterFactory(cb.build()).getInstance();
         statuses = twitter.getUserTimeline("@CodeWisdom");
