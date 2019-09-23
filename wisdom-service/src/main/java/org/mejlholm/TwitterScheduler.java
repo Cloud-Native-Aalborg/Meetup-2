@@ -2,7 +2,12 @@ package org.mejlholm;
 
 import io.quarkus.scheduler.Scheduled;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import twitter4j.*;
+import org.eclipse.microprofile.opentracing.Traced;
+import twitter4j.ResponseList;
+import twitter4j.Status;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
 import javax.annotation.PostConstruct;
@@ -38,6 +43,7 @@ class TwitterScheduler {
     }
 
     @Scheduled(every = "1h")
+    @Traced
     void scheduleGetTweets() throws TwitterException {
         Twitter twitter = new TwitterFactory(cb.build()).getInstance();
         statuses = twitter.getUserTimeline("@CodeWisdom");

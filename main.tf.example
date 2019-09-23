@@ -51,6 +51,9 @@ resource "hcloud_server" "server-1" {
     command = "kubectl patch deployments -n flux flux --type='json' -p='[{\"op\": \"add\", \"path\": \"/spec/template/spec/containers/0/args/-\", \"value\": \"--git-ci-skip\"}]'"
   }
 
+  provisioner "local-exec" {
+    command = "linkerd install | kubectl apply -f -"
+  }
 }
 
 # Create Debian 10 server
