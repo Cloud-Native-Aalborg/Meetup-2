@@ -2,8 +2,6 @@
 todo:
 ------
 
-
- - maesh???
  - drone in cluster
  - drone docker use cache
  - observability (grafana, prometheus, jaeger)
