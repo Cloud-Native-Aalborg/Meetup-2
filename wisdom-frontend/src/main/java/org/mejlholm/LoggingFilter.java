@@ -43,13 +43,13 @@ public class LoggingFilter implements ContainerRequestFilter, ContainerResponseF
             tracer.activeSpan().setBaggageItem("uuid", uuid);
         }
 
-        LOG.infof("Request %s %s %s from IP %s", uuid, method, path, address);
+        LOG.infof("Request [UUID=%s] %s %s from IP %s", uuid, method, path, address);
 
         tracer.activeSpan().setTag("uuid", uuid).setTag("method", method).setTag("path", path).setTag("address", address);
     }
 
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
-        LOG.infof("Response %s code %s ", tracer.activeSpan().getBaggageItem("uuid"), responseContext.getStatus());
+        LOG.infof("Response [UUID=%s] status code %s ", tracer.activeSpan().getBaggageItem("uuid"), responseContext.getStatus());
     }
 }
