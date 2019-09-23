@@ -138,6 +138,14 @@ fluxctl identity --k8s-fwd-ns flux
 
 ~~~
 
+## Local storage
+
+~~~Shell
+kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
+
+~~~
+
+
 ## Closing remarks
 K3s is not HA ready yet - but it makes a great little tool for testing kubernetes (and it runs a raspberry pi).
 K3s has an open port for the api by default, please check if running anything in the public cloud. 

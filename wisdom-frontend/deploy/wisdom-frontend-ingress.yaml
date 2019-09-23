@@ -11,5 +11,5 @@ spec:
       paths:
       - path: /
         backend:
-          serviceName: wisdom-frontend.maesh
+          serviceName: wisdom-frontend
           servicePort: 8080
