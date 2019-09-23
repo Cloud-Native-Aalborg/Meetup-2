@@ -2,14 +2,6 @@ kind: pipeline
 name: default
 
 steps:
-  - name: prepare
-    image: busybox
-    commands:
-      - mkdir -p /cache/${DRONE_REPO}/docker
-    volumes:
-      - name: cache
-        path: /cache
-
   - name: build-wisdom-service
     image: plugins/docker
     settings:
@@ -23,7 +15,6 @@ steps:
       tags:
         - latest
         - 2.0.${DRONE_BUILD_NUMBER}
-      use_cache: true
 
   - name: build-wisdom-frontend
     image: plugins/docker
@@ -38,7 +29,6 @@ steps:
       tags:
         - latest
         - 2.0.${DRONE_BUILD_NUMBER}
-      use_cache: true
 
   - name: notify
     image: plugins/slack
@@ -53,11 +43,3 @@ trigger:
   event:
     exclude:
     - tag
-
-volumes:
-  - name: cache
-    host:
-      path: /var/cache
-  - name: docker
-    host:
-      path: /var/cache/${DRONE_REPO}/docker
