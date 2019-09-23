@@ -5,7 +5,7 @@ metadata:
   namespace: monitoring
 spec:
   rules:
-    - host: jaeger.wisdom.mejlholm.org
+    - host: jaeger.mejlholm.org
       http:
         paths:
           - path: /
