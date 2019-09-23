@@ -3,7 +3,6 @@ package org.mejlholm;
 import io.quarkus.scheduler.Scheduled;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.opentracing.Traced;
-import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -12,7 +11,9 @@ import twitter4j.conf.ConfigurationBuilder;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 @Traced
@@ -31,7 +32,7 @@ class TwitterScheduler {
     String accessTokenSecret;
 
     private Random rand = new Random();
-    private ResponseList<Status> statuses;
+    private List<Status> statuses;
     private ConfigurationBuilder cb;
 
     @PostConstruct
@@ -47,7 +48,7 @@ class TwitterScheduler {
     @Scheduled(every = "1h")
     void scheduleGetTweets() throws TwitterException {
         Twitter twitter = new TwitterFactory(cb.build()).getInstance();
-        statuses = twitter.getUserTimeline("@CodeWisdom");
+        statuses = twitter.getUserTimeline("@CodeWisdom").stream().filter(s -> !s.isRetweet()).collect(Collectors.toList());
     }
 
     String getRandomTweet() {
