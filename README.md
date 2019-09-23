@@ -70,7 +70,7 @@ If you are interested in the applications things to noice are:
  - flux monitors and deploy them
 
 ~~~Shell
-kubectl apply -f namespaces
+kubectl apply -f k8s/namespaces
 
 kubectl config set-context --current --namespace=apps
 kubectl create secret generic wisdom-service-secret --from-env-file=secret.env
@@ -129,7 +129,7 @@ fluxctl install \
 --git-user=mejlholm \
 --git-email=mejlholm@users.noreply.github.com \
 --git-url=git@github.com:Cloud-Native-Aalborg/Meetup-2 \
---git-paths=namespaces,wisdom-frontend/deploy,wisdom-service/deploy \
+--git-paths=k8s,wisdom-frontend/deploy,wisdom-service/deploy \
 --namespace=flux | kubectl apply -f -
 
 kubectl patch deployments -n flux flux --type='json' -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--git-ci-skip"}]'

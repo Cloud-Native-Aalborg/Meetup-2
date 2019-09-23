@@ -33,6 +33,13 @@ spec:
         resources:
           limits:
             memory: "256Mi"
+        env:
+          - name: JAEGER_ENDPOINT
+            value: 'http://jaeger-collector.monitoring:14268/api/traces'
+          - name: JAEGER_SAMPLER_TYPE
+            value: 'const'
+          - name: JAEGER_SAMPLER_PARAM
+            value: '1'
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 3
@@ -40,10 +47,10 @@ spec:
             path: /health
             port: 8081
             scheme: HTTP
-          initialDelaySeconds: 2
+          initialDelaySeconds: 10
           periodSeconds: 10
           successThreshold: 1
-          timeoutSeconds: 5
+          timeoutSeconds: 10
         readinessProbe:
           failureThreshold: 3
           httpGet:

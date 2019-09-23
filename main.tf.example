@@ -44,7 +44,7 @@ resource "hcloud_server" "server-1" {
   }
 
   provisioner "local-exec" {
-    command = "fluxctl install --git-user=mejlholm --git-email=mejlholm@users.noreply.github.com --git-url=git@github.com:Cloud-Native-Aalborg/Meetup-2 --git-paths=namespaces,wisdom-frontend/deploy,wisdom-service/deploy --namespace=flux | kubectl apply -f - "
+    command = "fluxctl install --git-user=mejlholm --git-email=mejlholm@users.noreply.github.com --git-url=git@github.com:Cloud-Native-Aalborg/Meetup-2 --git-paths=k8s,wisdom-frontend/deploy,wisdom-service/deploy --namespace=flux | kubectl apply -f - "
   }
 
   provisioner "local-exec" {

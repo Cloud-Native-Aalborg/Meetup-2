@@ -1,0 +1,21 @@
+{
+  "kind": "Namespace",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "apps",
+    "labels": {
+      "name": "apps"
+    }
+  }
+}
+
+  {
+    "kind": "Namespace",
+    "apiVersion": "v1",
+    "metadata": {
+      "name": "monitoring",
+      "labels": {
+        "name": "monitoring"
+      }
+    }
+  }
