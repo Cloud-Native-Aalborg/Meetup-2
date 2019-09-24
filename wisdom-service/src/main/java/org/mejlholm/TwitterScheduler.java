@@ -1,6 +1,7 @@
 package org.mejlholm;
 
 import io.quarkus.scheduler.Scheduled;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.Gauge;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 @Traced
+@Slf4j
 class TwitterScheduler {
 
     @ConfigProperty(name = "CONSUMER_KEY")
@@ -56,7 +58,7 @@ class TwitterScheduler {
     }
 
     Tweet getRandomTweet() {
-        if (statuses != null && !statuses.isEmpty()) {
+        if (statuses != null && ! statuses.isEmpty()) {
             Status status = statuses.get(rand.nextInt(statuses.size()));
             String rawText = status.getText();
 
@@ -64,6 +66,8 @@ class TwitterScheduler {
             Matcher m = p.matcher(rawText);
             if (m.find()) {
                 return new Tweet(m.group(1), m.group(2));
+            } else {
+                log.info("Unable to parse: " + rawText);
             }
         }
         return new Tweet("No quotes yet", "No Author");
