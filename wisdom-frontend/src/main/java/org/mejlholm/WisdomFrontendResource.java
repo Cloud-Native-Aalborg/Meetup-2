@@ -1,5 +1,6 @@
 package org.mejlholm;
 
+import org.eclipse.microprofile.context.ThreadContext;
 import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
 import org.eclipse.microprofile.metrics.annotation.Metered;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -19,6 +20,9 @@ import java.util.concurrent.CompletionStage;
 public class WisdomFrontendResource {
 
     @Inject
+    ThreadContext threadContext;
+
+    @Inject
     @RestClient
     WisdomClient wisdomClient;
 
@@ -27,6 +31,6 @@ public class WisdomFrontendResource {
     @Path("random")
     @CircuitBreaker(requestVolumeThreshold = 10)
     public CompletionStage<Response> random() {
-        return wisdomClient.random();
+        return threadContext.withContextCapture(wisdomClient.random());
     }
 }
