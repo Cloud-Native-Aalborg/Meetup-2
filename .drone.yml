@@ -10,8 +10,8 @@ steps:
         from_secret: docker_hub_username
       password:
         from_secret: docker_hub_password
-      #dockerfile: wisdom-service/Dockerfile.graalvm
-      dockerfile: wisdom-service/Dockerfile
+      dockerfile: wisdom-service/Dockerfile.graalvm
+      #dockerfile: wisdom-service/Dockerfile
       context: wisdom-service
       tags:
         - latest
@@ -25,8 +25,8 @@ steps:
         from_secret: docker_hub_username
       password:
         from_secret: docker_hub_password
-      #dockerfile: wisdom-frontend/Dockerfile.graalvm
-      dockerfile: wisdom-frontend/Dockerfile
+      dockerfile: wisdom-frontend/Dockerfile.graalvm
+      #dockerfile: wisdom-frontend/Dockerfile
       context: wisdom-frontend
       tags:
         - latest
