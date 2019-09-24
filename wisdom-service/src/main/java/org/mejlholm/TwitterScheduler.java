@@ -47,7 +47,7 @@ class TwitterScheduler {
                 .setOAuthAccessTokenSecret(accessTokenSecret);
     }
 
-    @Scheduled(every = "1h")
+    @Scheduled(every = "20m")
     void scheduleGetTweets() throws TwitterException {
         Twitter twitter = new TwitterFactory(cb.build()).getInstance();
         statuses = twitter.getUserTimeline("@CodeWisdom").stream().filter(s -> !s.isRetweet()).collect(Collectors.toList());

@@ -1,9 +1,7 @@
 $(document).ready(function(){
-    setTimeout(getQuote, 30000);
-
     $("#newButton").on("click", getQuote);
-});
-
+    setTimeout(getQuote, 30000);
+);
 
 function getQuote() {
     console.log("getting quote...");
