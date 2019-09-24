@@ -1,5 +1,6 @@
 package org.mejlholm;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import io.quarkus.scheduler.Scheduled;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 @Traced
 @Slf4j
+@RegisterForReflection
 class TwitterScheduler {
 
     @ConfigProperty(name = "CONSUMER_KEY")
@@ -66,7 +68,7 @@ class TwitterScheduler {
             Pattern p = Pattern.compile("^(.*)-(.*)$");
             Matcher m = p.matcher(rawText);
             if (m.find()) {
-                return new Tweet(m.group(1).strip(), m.group(2).strip());
+                return new Tweet(m.group(1), m.group(2));
             } else {
                 log.info("Unable to parse: " + rawText);
             }
