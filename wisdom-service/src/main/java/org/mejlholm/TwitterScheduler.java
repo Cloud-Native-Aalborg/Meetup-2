@@ -14,6 +14,7 @@ import twitter4j.conf.ConfigurationBuilder;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -38,7 +39,7 @@ class TwitterScheduler {
     String accessTokenSecret;
 
     private Random rand = new Random();
-    private List<Status> statuses;
+    private List<Status> statuses = new ArrayList<>();
     private ConfigurationBuilder cb;
 
     @PostConstruct
@@ -62,10 +63,10 @@ class TwitterScheduler {
             Status status = statuses.get(rand.nextInt(statuses.size()));
             String rawText = status.getText();
 
-            Pattern p = Pattern.compile("^(.*) - (.*)$");
+            Pattern p = Pattern.compile("^(.*)-(.*)$");
             Matcher m = p.matcher(rawText);
             if (m.find()) {
-                return new Tweet(m.group(1), m.group(2));
+                return new Tweet(m.group(1).strip(), m.group(2).strip());
             } else {
                 log.info("Unable to parse: " + rawText);
             }
