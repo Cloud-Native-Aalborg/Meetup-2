@@ -10,7 +10,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.concurrent.CompletionStage;
 
 @Path("wisdom")
 @Metered
@@ -25,7 +24,7 @@ public class WisdomFrontendResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("random")
     //@CircuitBreaker(requestVolumeThreshold = 10)
-    public CompletionStage<Response> random() {
+    public Response random() {
         return wisdomClient.random();
     }
 }
