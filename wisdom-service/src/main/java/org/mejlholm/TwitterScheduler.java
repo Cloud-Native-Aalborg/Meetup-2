@@ -59,7 +59,7 @@ class TwitterScheduler {
     }
 
     Tweet getRandomTweet() {
-        if (statuses != null && ! statuses.isEmpty()) {
+        if (! statuses.isEmpty()) {
             Status status = statuses.get(rand.nextInt(statuses.size()));
             String rawText = status.getText();
 
@@ -71,7 +71,7 @@ class TwitterScheduler {
                 log.info("Unable to parse: " + rawText);
             }
         }
-        return new Tweet("No quotes yet", "No Author");
+        return new Tweet("Sorry - the quote was un-digestible!", "Arne Mejlholm");
     }
 
     @Gauge(name = "numberOfTweets", unit = MetricUnits.NONE, description = "Shows the number of tweets.")
