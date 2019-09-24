@@ -23,7 +23,7 @@ public class WisdomResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("random")
-    public Response hello() {
+    public Response random() {
 
         JsonObject payload = Json.createObjectBuilder()
                 .add("message", twitterScheduler.getRandomTweet())
