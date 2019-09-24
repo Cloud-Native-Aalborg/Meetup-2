@@ -1,7 +1,7 @@
 FROM maven:3.6.2-jdk-11-slim AS build
 
 RUN curl -L https://github.com/oracle/graal/releases/download/vm-19.1.1/graalvm-ce-linux-amd64-19.1.1.tar.gz --output graalvm-ce-linux-amd64-19.1.1.tar.gz \
- && tar -xvf graalvm-ce-linux-amd64-19.1.1.tar.gz -C / \
+ && tar -xf graalvm-ce-linux-amd64-19.1.1.tar.gz -C / \
  && rm -rf graalvm-ce-linux-amd64-19.1.1.tar.gz \
  && /graalvm-ce-19.1.1/bin/gu install native-image \
  && apt-get update \
