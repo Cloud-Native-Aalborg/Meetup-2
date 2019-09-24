@@ -15,6 +15,8 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -53,12 +55,18 @@ class TwitterScheduler {
         statuses = twitter.getUserTimeline("@CodeWisdom").stream().filter(s -> !s.isRetweet()).collect(Collectors.toList());
     }
 
-    String getRandomTweet() {
-        if (statuses == null || statuses.isEmpty()) {
-            return "No quotes yet";
-        } else {
-            return statuses.get(rand.nextInt(statuses.size())).getText();
+    Tweet getRandomTweet() {
+        if (statuses != null && !statuses.isEmpty()) {
+            Status status = statuses.get(rand.nextInt(statuses.size()));
+            String rawText = status.getText();
+
+            Pattern p = Pattern.compile("^(.*) - (.*)$");
+            Matcher m = p.matcher(rawText);
+            if (m.find()) {
+                return new Tweet(m.group(1), m.group(2));
+            }
         }
+        return new Tweet("No quotes yet", "No Author");
     }
 
     @Gauge(name = "numberOfTweets", unit = MetricUnits.NONE, description = "Shows the number of tweets.")

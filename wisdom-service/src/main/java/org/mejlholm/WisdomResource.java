@@ -27,8 +27,11 @@ public class WisdomResource {
     @CircuitBreaker(requestVolumeThreshold = 10)
     public Response random() {
 
+        Tweet tweet = twitterScheduler.getRandomTweet();
+
         JsonObject payload = Json.createObjectBuilder()
-                .add("message", twitterScheduler.getRandomTweet())
+                .add("author", tweet.getAuthor())
+                .add("quote", tweet.getQuote())
                 .build();
 
         return Response.ok().entity(payload.toString()).build();
