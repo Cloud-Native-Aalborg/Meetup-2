@@ -8,14 +8,14 @@ function getQuote() {
             $("#quote").html("Oh no - error getting quote!");
         }
     });
-    initialCall();
+    reload();
 }
 
-function initialCall() {
+function reload() {
    setTimeout(getQuote, 30000);
 }
 
 $(document).ready(function(){
     $("#newButton").on("click", getQuote);
-    setTimeout(getQuote, 30000);
+    getQuote();
 });
