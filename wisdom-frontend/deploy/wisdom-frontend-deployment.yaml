@@ -10,7 +10,7 @@ metadata:
     fluxcd.io/tag.wisdom-frontend: glob:2.*
     fluxcd.io/automated: 'true'
 spec:
-  replicas: 10
+  replicas: 20
   selector:
     matchLabels:
       app: wisdom-frontend
@@ -29,7 +29,7 @@ spec:
         image: mejlholm/wisdom-frontend:2.0.81
         resources:
           limits:
-            memory: "128Mi"
+            memory: "64Mi"
         env:
         - name: JAEGER_ENDPOINT
           value: 'http://jaeger-collector.monitoring:14268/api/traces'
