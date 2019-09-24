@@ -61,19 +61,17 @@ class TwitterScheduler {
     }
 
     Tweet getRandomTweet() {
-        if (! statuses.isEmpty()) {
-            Status status = statuses.get(rand.nextInt(statuses.size()));
-            String rawText = status.getText();
+        Status status = statuses.get(rand.nextInt(statuses.size()));
+        String rawText = status.getText();
 
-            Pattern p = Pattern.compile("^(.*)-(.*)$");
-            Matcher m = p.matcher(rawText);
-            if (m.find()) {
-                return new Tweet(m.group(1), m.group(2));
-            } else {
-                log.info("Unable to parse: " + rawText);
-            }
+        Pattern p = Pattern.compile("^(.*)-(.*)$");
+        Matcher m = p.matcher(rawText);
+        if (m.find()) {
+            return new Tweet(m.group(1), m.group(2));
+        } else {
+            log.info("Unable to parse: " + rawText);
+            return new Tweet("Sorry - the quote was un-digestible!", "Arne Mejlholm");
         }
-        return new Tweet("Sorry - the quote was un-digestible!", "Arne Mejlholm");
     }
 
     @Gauge(name = "numberOfTweets", unit = MetricUnits.NONE, description = "Shows the number of tweets.")
