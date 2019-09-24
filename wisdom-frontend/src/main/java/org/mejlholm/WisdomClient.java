@@ -10,6 +10,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.time.temporal.ChronoUnit;
+import java.util.concurrent.CompletionStage;
 
 @Path("/wisdom")
 @RegisterRestClient
@@ -20,6 +21,6 @@ public interface WisdomClient {
     @Produces(MediaType.APPLICATION_JSON)
     @Timeout(unit = ChronoUnit.MILLIS, value = 500)
     @Retry(maxRetries = 3)
-    Response random();
+    CompletionStage<Response> random();
 
 }
