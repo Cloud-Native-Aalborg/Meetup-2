@@ -1,7 +1,7 @@
 todo:
 ------
 
-- grpc
-
+ - grpc
+ - eget registry
  - drone in cluster
  - elk stack
