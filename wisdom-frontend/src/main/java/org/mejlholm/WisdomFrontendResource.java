@@ -1,5 +1,6 @@
 package org.mejlholm;
 
+import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
 import org.eclipse.microprofile.metrics.annotation.Metered;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -24,6 +25,7 @@ public class WisdomFrontendResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("random")
+    @CircuitBreaker(requestVolumeThreshold = 10)
     public CompletionStage<Response> random() {
         return wisdomClient.random();
     }

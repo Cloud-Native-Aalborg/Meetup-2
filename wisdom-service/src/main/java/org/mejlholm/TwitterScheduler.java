@@ -2,6 +2,8 @@ package org.mejlholm;
 
 import io.quarkus.scheduler.Scheduled;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.metrics.MetricUnits;
+import org.eclipse.microprofile.metrics.annotation.Gauge;
 import org.eclipse.microprofile.opentracing.Traced;
 import twitter4j.Status;
 import twitter4j.Twitter;
@@ -57,5 +59,10 @@ class TwitterScheduler {
         } else {
             return statuses.get(rand.nextInt(statuses.size())).getText();
         }
+    }
+
+    @Gauge(name = "numberOfTweets", unit = MetricUnits.NONE, description = "Shows the number of tweets.")
+    public int getNumberOfTweets() {
+        return statuses.size();
     }
 }
