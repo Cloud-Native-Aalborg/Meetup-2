@@ -1,6 +1,5 @@
 package org.mejlholm;
 
-import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
 import org.eclipse.microprofile.metrics.annotation.Metered;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -24,7 +23,7 @@ public class WisdomResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("random")
-    @CircuitBreaker(requestVolumeThreshold = 10)
+    //@CircuitBreaker(requestVolumeThreshold = 10)
     public Response random() {
 
         Tweet tweet = twitterScheduler.getRandomTweet();
