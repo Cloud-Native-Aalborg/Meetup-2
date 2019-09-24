@@ -54,6 +54,7 @@ steps:
       webhook:
         from_secret: slack_webhook
     depends_on:
+#      - quarkus-native-builder
       - build-wisdom-service
       - build-wisdom-frontend
     when:
