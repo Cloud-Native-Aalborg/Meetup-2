@@ -2,7 +2,7 @@ package org.mejlholm;
 
 
 import io.opentracing.Tracer;
-import org.jboss.logging.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -17,9 +17,8 @@ import java.util.UUID;
 
 
 @Provider
+@Slf4j
 public class LoggingFilter implements ContainerRequestFilter, ContainerResponseFilter {
-
-    private static final Logger LOG = Logger.getLogger(LoggingFilter.class);
 
     @Context
     UriInfo info;
@@ -43,13 +42,17 @@ public class LoggingFilter implements ContainerRequestFilter, ContainerResponseF
             tracer.activeSpan().setBaggageItem("uuid", uuid);
         }
 
-        LOG.infof("Request [UUID=%s] %s %s from IP %s", uuid, method, path, address);
+        log.info("Request [UUID=" + uuid +"] " + method + " " + path + " from IP " + address);
 
         tracer.activeSpan().setTag("uuid", uuid).setTag("method", method).setTag("path", path).setTag("address", address);
     }
 
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
-        LOG.infof("Response [UUID=%s] status code %s ", tracer.activeSpan().getBaggageItem("uuid"), responseContext.getStatus());
+        if (responseContext != null && tracer.activeSpan() != null && tracer.activeSpan().getBaggageItem("uuid") != null) {
+            log.info("Response [UUID=" + tracer.activeSpan().getBaggageItem("uuid") + "] status code " + responseContext.getStatus());
+        } else {
+            log.info("No response context");
+        }
     }
 }
