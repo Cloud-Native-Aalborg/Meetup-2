@@ -2,19 +2,19 @@ kind: pipeline
 name: default
 
 steps:
-  - name: quarkus-native-builder
-    image: plugins/docker
-    settings:
-      repo: mejlholm/quarkus-native-builder
-      username:
-        from_secret: docker_hub_username
-      password:
-        from_secret: docker_hub_password
-      dockerfile: quarkus-native-builder/Dockerfile
-      context: quarkus-native-builder
-      tags:
-        - latest
-        - 2.0.${DRONE_BUILD_NUMBER}
+#  - name: quarkus-native-builder
+#    image: plugins/docker
+#    settings:
+#      repo: mejlholm/quarkus-native-builder
+#      username:
+#        from_secret: docker_hub_username
+#      password:
+#        from_secret: docker_hub_password
+#      dockerfile: quarkus-native-builder/Dockerfile
+#      context: quarkus-native-builder
+#      tags:
+#        - latest
+#        - 2.0.${DRONE_BUILD_NUMBER}
 
   - name: build-wisdom-service
     image: plugins/docker
@@ -29,8 +29,8 @@ steps:
       tags:
         - latest
         - 2.0.${DRONE_BUILD_NUMBER}
-    depends_on:
-      - quarkus-native-builder
+#    depends_on:
+#      - quarkus-native-builder
 
   - name: build-wisdom-frontend
     image: plugins/docker
@@ -45,8 +45,8 @@ steps:
       tags:
         - latest
         - 2.0.${DRONE_BUILD_NUMBER}
-    depends_on:
-      - quarkus-native-builder
+#    depends_on:
+#      - quarkus-native-builder
 
   - name: notify
     image: plugins/slack

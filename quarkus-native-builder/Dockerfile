@@ -13,3 +13,7 @@ RUN mkdir -p /tmp/ssl-libs/lib \
   && cp /graalvm-ce-19.1.1/jre/lib/security/cacerts /tmp/ssl-libs \
   && cp /graalvm-ce-19.1.1/jre/lib/amd64/libsunec.so /tmp/ssl-libs/lib/
 
+COPY pom.xml pom.xml
+
+#download dependencies for caching
+RUN mvn -B org.apache.maven.plugins:maven-dependency-plugin:3.1.1:go-offline
