@@ -9,5 +9,7 @@ class Tweet {
     private String quote;
 
     Tweet(String quote, String author) {
+        this.author = author;
+        this.quote = quote;
     }
 }
