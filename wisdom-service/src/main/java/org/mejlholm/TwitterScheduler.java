@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.Gauge;
+import org.eclipse.microprofile.opentracing.Traced;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 @Slf4j
+@Traced
 @RegisterForReflection
 class TwitterScheduler {
 
