@@ -61,16 +61,20 @@ class TwitterScheduler {
     }
 
     Tweet getRandomTweet() {
-        Status status = statuses.get(rand.nextInt(statuses.size()));
-        String rawText = status.getText();
+        if (!statuses.isEmpty()) {
+            Status status = statuses.get(rand.nextInt(statuses.size()));
+            String rawText = status.getText();
 
-        Pattern p = Pattern.compile("^(.*)-(.*)$");
-        Matcher m = p.matcher(rawText);
-        if (m.find()) {
-            return new Tweet(m.group(1), m.group(2));
+            Pattern p = Pattern.compile("^(.*)-(.*)$");
+            Matcher m = p.matcher(rawText);
+            if (m.find()) {
+                return new Tweet(m.group(1), m.group(2));
+            } else {
+                log.info("Unable to parse: " + rawText);
+                return new Tweet("Sorry - the quote was un-digestible!", "Arne Mejlholm");
+            }
         } else {
-            log.info("Unable to parse: " + rawText);
-            return new Tweet("Sorry - the quote was un-digestible!", "Arne Mejlholm");
+            return new Tweet("Glimpse in the matrix, carry on...", "The system");
         }
     }
 
