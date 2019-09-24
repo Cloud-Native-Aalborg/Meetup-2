@@ -3,11 +3,11 @@ function getQuote() {
     $.getJSON({url: "http://" + window.location.hostname + "/wisdom/random",
         success: function(result) {
             $("#quote").html(result['quote']);
-            $("#author").html(result['author']);
+            $("#author").html("- " + result['author']);
         },
         error:  function(result) {
             $("#quote").html("Oh no - error getting quote!");
-            $("#author").html("Arne Mejlholm");
+            $("#author").html("- Arne Mejlholm");
         }
     });
     reload();
