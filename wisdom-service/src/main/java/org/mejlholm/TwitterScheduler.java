@@ -40,7 +40,7 @@ class TwitterScheduler {
     String accessTokenSecret;
 
     private Random rand = new Random();
-    private List<Tweet> statuses = new ArrayList<>();
+    private List<Tweet> tweets = new ArrayList<>();
 
     @Scheduled(every = "1h")
     void scheduleGetTweets() throws TwitterException {
@@ -52,7 +52,7 @@ class TwitterScheduler {
                 .setOAuthAccessTokenSecret(accessTokenSecret);
 
         Twitter twitter = new TwitterFactory(cb.build()).getInstance();
-        statuses = twitter.getUserTimeline("@CodeWisdom").stream()
+        tweets = twitter.getUserTimeline("@CodeWisdom").stream()
                 .filter(s -> !s.isRetweet())
                 .map(s -> parseText(s.getText()))
                 .filter(Objects::nonNull)
@@ -60,10 +60,10 @@ class TwitterScheduler {
     }
 
     Tweet getRandomTweet() {
-        if (statuses.isEmpty()) {
+        if (tweets.isEmpty()) {
             return new Tweet("Glimpse in the matrix...", "Trinity");
         } else {
-            return statuses.get(rand.nextInt(statuses.size()));
+            return tweets.get(rand.nextInt(tweets.size()));
         }
     }
 
@@ -79,6 +79,6 @@ class TwitterScheduler {
 
     @Gauge(name = "numberOfTweets", unit = MetricUnits.NONE, description = "Shows the number of tweets.")
     public int getNumberOfTweets() {
-        return statuses.size();
+        return tweets.size();
     }
 }
