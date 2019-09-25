@@ -7,8 +7,6 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.Gauge;
 import org.eclipse.microprofile.opentracing.Traced;
-import twitter4j.Paging;
-import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -17,6 +15,7 @@ import twitter4j.conf.ConfigurationBuilder;
 import javax.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,7 +40,7 @@ class TwitterScheduler {
     String accessTokenSecret;
 
     private Random rand = new Random();
-    private List<Status> statuses = new ArrayList<>();
+    private List<Tweet> statuses = new ArrayList<>();
 
     @Scheduled(every = "1h")
     void scheduleGetTweets() throws TwitterException {
@@ -53,26 +52,29 @@ class TwitterScheduler {
                 .setOAuthAccessTokenSecret(accessTokenSecret);
 
         Twitter twitter = new TwitterFactory(cb.build()).getInstance();
-        statuses = twitter.getUserTimeline("@CodeWisdom").stream().filter(s -> !s.isRetweet()).collect(Collectors.toList());
+        statuses = twitter.getUserTimeline("@CodeWisdom").stream()
+                .filter(s -> !s.isRetweet())
+                .map(s -> parseText(s.getText()))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     Tweet getRandomTweet() {
-        if (!statuses.isEmpty()) {
-            Status status = statuses.get(rand.nextInt(statuses.size()));
-            String rawText = status.getText();
-
-            Pattern p = Pattern.compile("^(.*)-(.*)$");
-            Matcher m = p.matcher(rawText);
-            if (m.find()) {
-                return new Tweet(m.group(1), m.group(2));
-            } else {
-                log.info("Unable to parse: " + rawText + " - removing it...");
-                statuses.remove(status);
-                return new Tweet("Sorry - the quote was un-digestible!", "Arne Mejlholm");
-            }
-        } else {
+        if (statuses.isEmpty()) {
             return new Tweet("Glimpse in the matrix...", "Trinity");
+        } else {
+            return statuses.get(rand.nextInt(statuses.size()));
         }
+    }
+
+    private Tweet parseText(String text) {
+        Pattern p = Pattern.compile("^(.*)-(.*)$");
+        Matcher m = p.matcher(text);
+
+        if (m.find()) {
+            return new Tweet(m.group(1), m.group(2));
+        }
+        return null;
     }
 
     @Gauge(name = "numberOfTweets", unit = MetricUnits.NONE, description = "Shows the number of tweets.")
