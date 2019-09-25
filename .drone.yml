@@ -62,6 +62,8 @@ steps:
         - failure
 
 trigger:
+  branch:
+    - master
   event:
     exclude:
     - tag
