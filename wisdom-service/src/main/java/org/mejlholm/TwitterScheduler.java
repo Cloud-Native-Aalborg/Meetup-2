@@ -13,7 +13,6 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,20 +41,16 @@ class TwitterScheduler {
 
     private Random rand = new Random();
     private List<Status> statuses = new ArrayList<>();
-    private ConfigurationBuilder cb;
 
-    @PostConstruct
-    private void init() {
-        cb = new ConfigurationBuilder()
+    @Scheduled(every = "1h")
+    void scheduleGetTweets() throws TwitterException {
+        ConfigurationBuilder cb = new ConfigurationBuilder()
                 .setIncludeMyRetweetEnabled(false)
                 .setOAuthConsumerKey(consumerKey)
                 .setOAuthConsumerSecret(consumerSecret)
                 .setOAuthAccessToken(accessToken)
                 .setOAuthAccessTokenSecret(accessTokenSecret);
-    }
 
-    @Scheduled(every = "20m")
-    void scheduleGetTweets() throws TwitterException {
         Twitter twitter = new TwitterFactory(cb.build()).getInstance();
         statuses = twitter.getUserTimeline("@CodeWisdom").stream().filter(s -> !s.isRetweet()).collect(Collectors.toList());
     }
