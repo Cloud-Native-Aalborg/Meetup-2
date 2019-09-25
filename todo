@@ -4,3 +4,11 @@ todo:
  - grpc
  - drone in cluster
  - elk stack
+
+
+
+terraform:
+ - flux identity -> github deployment keys
+ - helm install tiller
+ - loki + grafana install with helm chart
+ - 

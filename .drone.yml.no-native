@@ -54,10 +54,16 @@ steps:
       webhook:
         from_secret: slack_webhook
     depends_on:
+#      - quarkus-native-builder
       - build-wisdom-service
       - build-wisdom-frontend
+    when:
+      status:
+        - failure
 
 trigger:
+  branch:
+    - master
   event:
     exclude:
     - tag
