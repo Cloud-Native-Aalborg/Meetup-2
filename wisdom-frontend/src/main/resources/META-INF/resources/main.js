@@ -1,6 +1,6 @@
 function getQuote() {
     console.log("getting quote...");
-    $.getJSON({url: "http://" + window.location.hostname + "/wisdom/random",
+    $.getJSON({url: window.location.origin + "/wisdom/random",
         success: function(result) {
             $("#quote").html(result['quote']);
             $("#author").html("- " + result['author']);
