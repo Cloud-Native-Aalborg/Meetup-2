@@ -7,6 +7,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.Gauge;
 import org.eclipse.microprofile.opentracing.Traced;
+import twitter4j.Paging;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -52,7 +53,7 @@ class TwitterScheduler {
                 .setOAuthAccessTokenSecret(accessTokenSecret);
 
         Twitter twitter = new TwitterFactory(cb.build()).getInstance();
-        statuses = twitter.getUserTimeline("@CodeWisdom").stream().filter(s -> !s.isRetweet()).collect(Collectors.toList());
+        statuses = twitter.getUserTimeline("@CodeWisdom", new Paging(50)).stream().filter(s -> !s.isRetweet()).collect(Collectors.toList());
     }
 
     Tweet getRandomTweet() {
