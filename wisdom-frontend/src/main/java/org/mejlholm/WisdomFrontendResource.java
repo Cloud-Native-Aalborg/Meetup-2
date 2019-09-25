@@ -23,7 +23,6 @@ public class WisdomFrontendResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("random")
-    //@CircuitBreaker(requestVolumeThreshold = 10)
     public Response random() {
         return wisdomClient.random();
     }

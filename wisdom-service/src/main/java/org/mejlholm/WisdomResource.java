@@ -23,7 +23,6 @@ public class WisdomResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("random")
-    //@CircuitBreaker(requestVolumeThreshold = 10)
     public Response random() {
 
         Tweet tweet = twitterScheduler.getRandomTweet();
