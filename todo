@@ -2,7 +2,5 @@ todo:
 ------
 
  - grpc
- - eget registry
  - drone in cluster
  - elk stack
- - json logging
