@@ -53,7 +53,7 @@ class TwitterScheduler {
                 .setOAuthAccessTokenSecret(accessTokenSecret);
 
         Twitter twitter = new TwitterFactory(cb.build()).getInstance();
-        statuses = twitter.getUserTimeline("@CodeWisdom", new Paging(50)).stream().filter(s -> !s.isRetweet()).collect(Collectors.toList());
+        statuses = twitter.getUserTimeline("@CodeWisdom").stream().filter(s -> !s.isRetweet()).collect(Collectors.toList());
     }
 
     Tweet getRandomTweet() {
