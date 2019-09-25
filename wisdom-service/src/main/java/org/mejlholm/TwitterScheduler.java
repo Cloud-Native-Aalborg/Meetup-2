@@ -71,7 +71,7 @@ class TwitterScheduler {
                 return new Tweet("Sorry - the quote was un-digestible!", "Arne Mejlholm");
             }
         } else {
-            return new Tweet("Glimpse in the matrix, carry on...", "The system");
+            return new Tweet("Glimpse in the matrix...", "Trinity");
         }
     }
 
