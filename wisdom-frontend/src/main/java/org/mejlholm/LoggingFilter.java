@@ -1,58 +1,49 @@
 package org.mejlholm;
 
-
-import io.opentracing.Tracer;
 import lombok.extern.slf4j.Slf4j;
+import org.zalando.logbook.DefaultSink;
+import org.zalando.logbook.Logbook;
+import org.zalando.logbook.StreamHttpLogWriter;
+import org.zalando.logbook.jaxrs.LogbookServerFilter;
+import org.zalando.logbook.json.JsonHttpLogFormatter;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.ConstrainedTo;
+import javax.ws.rs.RuntimeType;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
-import java.util.UUID;
-
+import javax.ws.rs.ext.WriterInterceptor;
+import javax.ws.rs.ext.WriterInterceptorContext;
+import java.io.IOException;
 
 @Provider
+@ConstrainedTo(RuntimeType.SERVER)
 @Slf4j
-public class LoggingFilter implements ContainerRequestFilter, ContainerResponseFilter {
+public class LoggingFilter implements ContainerRequestFilter, ContainerResponseFilter, WriterInterceptor {
 
-    @Context
-    UriInfo info;
+    private Logbook logbook = Logbook.builder()
+            .sink(new DefaultSink(
+                    new JsonHttpLogFormatter(),
+                    new StreamHttpLogWriter(System.out))
+            ).build();
 
-    @Context
-    HttpServletRequest request;
-
-    @Inject
-    Tracer tracer;
+    private LogbookServerFilter logbookServerFilter = new LogbookServerFilter(logbook);
 
     @Override
-    public void filter(ContainerRequestContext context) {
-
-        final String method = context.getMethod();
-        final String path = info.getPath();
-        final String address = request.getRemoteAddr();
-
-        String uuid = tracer.activeSpan().getBaggageItem("uuid");
-        if (uuid == null) {
-            uuid = UUID.randomUUID().toString();
-            tracer.activeSpan().setBaggageItem("uuid", uuid);
-        }
-
-        log.info("Request [UUID=" + uuid +"] " + method + " " + path + " from IP " + address);
-
-        tracer.activeSpan().setTag("uuid", uuid).setTag("method", method).setTag("path", path).setTag("address", address);
+    public void filter(ContainerRequestContext requestContext) throws IOException {
+        logbookServerFilter.filter(requestContext);
     }
 
     @Override
-    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) {
-        if (responseContext != null && tracer.activeSpan() != null && tracer.activeSpan().getBaggageItem("uuid") != null) {
-            log.info("Response [UUID=" + tracer.activeSpan().getBaggageItem("uuid") + "] status code " + responseContext.getStatus());
-        } else {
-            log.info("No response context");
-        }
+    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
+        logbookServerFilter.filter(requestContext, responseContext);
+    }
+
+    @Override
+    public void aroundWriteTo(final WriterInterceptorContext context) throws IOException {
+        logbookServerFilter.aroundWriteTo(context);
     }
 }
+
