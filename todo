@@ -5,3 +5,4 @@ todo:
  - eget registry
  - drone in cluster
  - elk stack
+ - json logging

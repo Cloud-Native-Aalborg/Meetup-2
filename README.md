@@ -145,6 +145,32 @@ kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisione
 
 ~~~
 
+## Tracing jaeger and traefik
+
+Add this to the traefik configmap and kill the pod
+
+~~~Shell
+#manual edit the configmap
+kubectl edit configmap -n kube-system traefik
+
+#add this part
+    [tracing]
+      servicename = "traefik"
+      [tracing.jaeger]
+        samplingType = "const"
+        samplingParam = 1.0
+        propagation = "jaeger"
+        localAgentHostPort = "jaeger-agent.monitoring:6831"
+        samplingServerURL="http://jaeger-agent.monitoring:5778/sampling"
+      [tracing.jaeger.collector]
+        endpoint = "http://jaeger-collector.monitoring:14268/api/traces?format=jaeger.thrift"
+#end
+
+#delete the pod to reload config
+kubectl delete pod -n kube-system $(kubectl -n kube-system get pods -l "app=traefik,release=traefik" -o jsonpath="{.items[0].metadata.name}")
+~~~
+
+
 
 ## Closing remarks
 K3s is not HA ready yet - but it makes a great little tool for testing kubernetes (and it runs a raspberry pi).
@@ -165,6 +191,8 @@ Below you find links to the things we've used in this demo:
 - https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/
 
 - https://fluxcd.io/
+
+- https://docs.traefik.io/master/observability/tracing/jaeger/
 
 - https://cloud.drone.io/Cloud-Native-Aalborg/Meetup-2/
 
