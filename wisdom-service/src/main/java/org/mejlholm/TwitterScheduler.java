@@ -66,7 +66,8 @@ class TwitterScheduler {
             if (m.find()) {
                 return new Tweet(m.group(1), m.group(2));
             } else {
-                log.info("Unable to parse: " + rawText);
+                log.info("Unable to parse: " + rawText + " - removing it...");
+                statuses.remove(status);
                 return new Tweet("Sorry - the quote was un-digestible!", "Arne Mejlholm");
             }
         } else {
