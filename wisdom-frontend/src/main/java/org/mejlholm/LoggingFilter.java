@@ -35,6 +35,7 @@ public class LoggingFilter implements ContainerRequestFilter, ContainerResponseF
         final String method = context.getMethod();
         final String path = info.getPath();
         final String address = request.getRemoteAddr();
+        final String realAddress = request.getHeader("X-Forwarded-For");
 
         String uuid = tracer.activeSpan().getBaggageItem("uuid");
         if (uuid == null) {
@@ -42,7 +43,7 @@ public class LoggingFilter implements ContainerRequestFilter, ContainerResponseF
             tracer.activeSpan().setBaggageItem("uuid", uuid);
         }
 
-        log.info("Request [UUID=" + uuid +"] " + method + " " + path + " from IP " + address);
+        log.info("Request [UUID=" + uuid +"] " + method + " " + path + " from IP " + address + "(" + realAddress + ")");
 
         tracer.activeSpan().setTag("uuid", uuid).setTag("method", method).setTag("path", path).setTag("address", address);
     }
