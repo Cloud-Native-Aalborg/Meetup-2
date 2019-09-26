@@ -29,7 +29,7 @@ spec:
         image: mejlholm/wisdom-frontend:2.0.125
         resources:
           limits:
-            memory: "128Mi"
+            memory: "64Mi"
         env:
         - name: JAEGER_ENDPOINT
           value: 'http://jaeger-collector.monitoring:14268/api/traces'
