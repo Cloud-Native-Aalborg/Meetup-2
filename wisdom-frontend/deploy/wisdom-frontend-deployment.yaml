@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
       - name: wisdom-frontend
-        image: mejlholm/wisdom-frontend:2.0.125
+        image: mejlholm/wisdom-frontend:2.0.126
         resources:
           limits:
             memory: "128Mi"
