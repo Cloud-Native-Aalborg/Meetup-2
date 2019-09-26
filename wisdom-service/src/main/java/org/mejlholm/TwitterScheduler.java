@@ -52,11 +52,11 @@ class TwitterScheduler {
                 .setOAuthAccessTokenSecret(accessTokenSecret);
 
         Twitter twitter = new TwitterFactory(cb.build()).getInstance();
-        tweets = twitter.getUserTimeline("@CodeWisdom").stream()
-                .filter(s -> !s.isRetweet())
-                .map(s -> parseText(s.getText()))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        tweets = twitter.getUserTimeline("@CodeWisdom").stream() //get users tweets
+                .filter(s -> !s.isRetweet()) // filter retweets
+                .map(s -> parseText(s.getText())) // convert status to tweet
+                .filter(Objects::nonNull) // filter the ones we couldn't parse
+                .collect(Collectors.toList()); // return list
     }
 
     Tweet getRandomTweet() {
@@ -70,7 +70,6 @@ class TwitterScheduler {
     private Tweet parseText(String text) {
         Pattern p = Pattern.compile("^(.*)-(.*)$");
         Matcher m = p.matcher(text);
-
         if (m.find()) {
             return new Tweet(m.group(1), m.group(2));
         }
