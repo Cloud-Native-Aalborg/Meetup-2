@@ -10,7 +10,7 @@ metadata:
     fluxcd.io/tag.wisdom-frontend: glob:2.*
     fluxcd.io/automated: 'true'
 spec:
-  replicas: 3
+  replicas: 20
   selector:
     matchLabels:
       app: wisdom-frontend
