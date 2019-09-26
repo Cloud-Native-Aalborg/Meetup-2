@@ -32,7 +32,7 @@ spec:
             name: wisdom-service-secret
         resources:
           limits:
-            memory: "96Mi"
+            memory: "128Mi"
         env:
         - name: JAEGER_ENDPOINT
           value: 'http://jaeger-collector.monitoring:14268/api/traces'
