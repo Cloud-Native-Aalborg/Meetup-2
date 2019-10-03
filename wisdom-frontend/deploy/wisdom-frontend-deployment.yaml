@@ -20,7 +20,7 @@ spec:
       labels:
         app: wisdom-frontend
       annotations:
-        linkerd.io/inject: enabled
+        #linkerd.io/inject: enabled
         prometheus.io/scrape: 'true'
         prometheus.io/port: '8080'
     spec:
