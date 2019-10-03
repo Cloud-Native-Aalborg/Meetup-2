@@ -1,6 +1,8 @@
 package org.mejlholm;
 
-import org.eclipse.microprofile.metrics.annotation.Metered;
+import org.eclipse.microprofile.metrics.MetricUnits;
+import org.eclipse.microprofile.metrics.annotation.Counted;
+import org.eclipse.microprofile.metrics.annotation.Timed;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -13,7 +15,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("/wisdom")
-@Metered
+@Counted(name = "numberOfAccesses")
+@Timed(name = "accessTimer", unit = MetricUnits.MILLISECONDS)
 @ApplicationScoped
 public class WisdomResource {
 
