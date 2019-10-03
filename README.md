@@ -2,152 +2,156 @@
 
 [![Build Status](https://cloud.drone.io/api/badges/Cloud-Native-Aalborg/Meetup-2/status.svg)](https://cloud.drone.io/Cloud-Native-Aalborg/Meetup-2)
 
-This document contains the commands used in the kubernetes in 10 minutes presentation.
+This document contains the commands used in the "Automated install and observability" talk. 
 Feel free to let me know if you have improvments or catch any typos.
 
 
 
 ## Steps to setup cluster
 
-Allocate 3 VMs on your favorite cloud hosting provider. 
-
-Install k3sup
+Last time we allocated the VMs manually using the cloud ui. This time we will use Terraform to provision the VMs
+for us, so that we essentially have our infrastructure-as-code. 
 
 ~~~Shell
-curl -sLS https://get.k3sup.dev | sh
-sudo install k3sup /usr/local/bin/
+
+# Prepare your main.tf terraform file, add token and ssh key
+
+# Run terraform to provision
+terraform apply
+
+# Run terraform to clean up
+terraform destroy
+
 ~~~
 
-Use k3sup to install k3s on master node
+This will provision the VMs for us, but also run k3sup to get us running kubernetes, apply our secrets file, 
+join the worker nodes and a bit more. 
+
+Nice and simple eh?
+
+
+### FluxCD
+
+Now that we have some infrastructure, lets get our application and observabilty stack installed. 
+How do we do that in a simple automated fashion? Lets give FluxCD a try.
 
 ~~~Shell
-export IP=xxx.yyy.zzz.199
-k3sup install --ip $IP
-mv kubeconfig ~/.kube/config
 
-kubectl get nodes
-NAME                STATUS   ROLES    AGE     VERSION
-debian-2gb-nbg1-1   Ready    worker   4m47s   v1.14.6-k3s.1
-~~~
+# Terraform has already installed FluxCD for us, we just need to give it access to read and write to our github repository. 
 
-Use k3sup to join work nodes
-
-~~~Shell
-k3sup join --ip xxx.yyy.zzz.200 --server-ip $IP
-k3sup join --ip xxx.yyy.zzz.201 --server-ip $IP
-~~~
-
-Check that the nodes are joining
-
-~~~Shell
-kubectl get nodes
-NAME                STATUS   ROLES    AGE     VERSION
-debian-2gb-nbg1-1   Ready    worker   4m47s   v1.14.6-k3s.1
-debian-2gb-nbg1-2   Ready    worker   5m29s   v1.14.6-k3s.1
-debian-2gb-nbg1-3   Ready    master   8m25s   v1.14.6-k3s.1
-~~~
-
-Check out pods (none yet)
-
-~~~Shell
-kubectl get pods
-No resources found.
-~~~
-
-
-## Steps to build and deploy applications
-
-Lets build our applications. This is automated, so not much to do here.
-
-If you are interested in the applications things to noice are: 
-
- - java applications build on quarkus with graalvm for startup times and memory usage.
- - multi-stage docker builds, so no need for local java tools in the builds. 
- - secret is not part of repository. Copy secret.env.example to secret.env and insert your twitter account details. 
- - static yaml files in deploy documents our deployments
- - a git post-update hook updates the image tag version in the deployment yaml files
- - drone builds the images
- - flux monitors and deploy them
-
-~~~Shell
-kubectl apply -f k8s/namespaces
-
-kubectl config set-context --current --namespace=apps
-kubectl create secret generic wisdom-service-secret --from-env-file=secret.env
-
-kubectl apply -f wisdom-service/deploy
-kubectl apply -f wisdom-frontend/deploy
-
-kubectl get pods
-NAME                              READY   STATUS    RESTARTS   AGE
-wisdom-frontend-6c86667dd-pmnsw   1/1     Running   0          2m59s
-wisdom-frontend-6c86667dd-thjlc   1/1     Running   0          3m5s
-wisdom-service-6c748d8748-5d87t   1/1     Running   0          3m6s
-wisdom-service-6c748d8748-v5r9k   1/1     Running   0          2m58s
-~~~
-
-Add wisdom.mejlholm.org to /etc/hosts (or setup real dns)
-
-~~~Shell
-sudo nano /etc/hosts #add the following line
-xxx.yyy.zzz.199  wisdom.mejlholm.org
-~~~
-
-Lets test our application
-
-~~~Shell
-curl http://wisdom.mejlholm.org/wisdom/random
-{"message":"\"Debuggers don't remove bugs. They only show them in slow motion.\" - Unknown"}
-~~~
-
-And check it out in the browser:
-http://wisdom.mejlholm.org/
-
-
-
-## If you don't like the commandline that much
-
-Sometimes you get a better overview with a ui - kubernetes web ui comes to the rescue.
-
-~~~Shell
-kubectl apply -f kubernetes-web-ui.yaml
-kubectl proxy
-kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk '{print $1}')
-kubectl delete -f kubernetes-web-ui.yaml
-~~~
-
-
-## Bonus: Setup FluxCD as GitOps deployment operator
-
-As a bonus we'll use the FluxCD operator to handle our deployments. What we commit to git will be deployed automatically for us. 
-
-~~~Shell
-export FLUX_FORWARD_NAMESPACE=flux
-
-kubectl create ns flux
-fluxctl install \
---git-user=mejlholm \
---git-email=mejlholm@users.noreply.github.com \
---git-url=git@github.com:Cloud-Native-Aalborg/Meetup-2 \
---git-paths=k8s,wisdom-frontend/deploy,wisdom-service/deploy \
---namespace=flux | kubectl apply -f -
-
-kubectl patch deployments -n flux flux --type='json' -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--git-ci-skip"}]'
+# Add the following output as a deploy key in github repository
 fluxctl identity --k8s-fwd-ns flux
-# Manually add key to Deploy keys in GitHub settings. 
+
+# Wait a couple of minutes and flux will get access and start deploying for us. 
 
 ~~~
 
-## Local storage
+Now we have an operator that is monitoring docker hub for new container images and github for changes in our yaml files. 
+Deployment is just a commit away... 
+
+### Whoa, that was a lot of magic
+
+Lets have a look at the interesting stuff. 
+
+~~~Shell
+
+main.tf
+deploy/*.yaml 
+ - Flux annotations
+
+~~~
+
+How about we scale our number of pods? 
+
+~~~Shell
+
+nano wisdom-service/deploy/wisdom-service-deployment.yaml
+nano wisdom-frontend/deploy/wisdom-frontend-deployment.yaml
+#set replicaes to 5
+
+git commit && git push
+
+~~~
+
+### Building the applications
+
+We are using drone.io to build our docker images. It will build every time we push to the master branch. 
+
+Once the images are built, FluxCD will discover them and bump the
+version in the deployment yaml files. 
+
+
+
+
+## Observability
+What can we do to see how our applications are running? 
+
+- Distributed tracing using Jaeger
+- Metrics using Prometheus and Grafana
+- Aggregated logs using Loki
+
+
+### Local storage
+
+Add local storage provisioner, so helm can use local storage for the charts that require persistent storage. 
 
 ~~~Shell
 kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/master/deploy/local-path-storage.yaml
-
 ~~~
 
-## Tracing jaeger and traefik
+### Install Helm and Grafana
 
-Add this to the traefik configmap and kill the pod
+Prometheus and Jaeger has already been installed by FluxCD in our cluster. We'd also like to run grafana, so lets 
+install that using helm.
+
+~~~Shell
+helm init
+
+kubectl --namespace kube-system create serviceaccount tiller
+kubectl create clusterrolebinding tiller-cluster-rule \
+ --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+kubectl --namespace kube-system patch deploy tiller-deploy \
+ -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}' 
+
+helm repo add loki https://grafana.github.io/loki/charts
+helm repo update
+helm install loki/loki-stack -n loki
+helm install stable/grafana -n loki-grafana
+
+#expose grafana
+kubectl port-forward loki-grafana-<pod-name> 3000
+
+#get admin password
+kubectl get secret --namespace default loki-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+
+#add datasource loki
+http://loki:3100
+
+#add datasource prometheus
+http://prometheus.monitoring:9090
+~~~
+
+### Checking logs with Loki
+
+How do we access our logs? What if we want to see them accross services and look at each pod?
+
+### Grafana dashboards
+
+Lets add some dashboards.
+
+- Number of tweets
+- Number of requests
+
+### Distributed tracing with Jaeger
+
+How long are our microservices taking? What part of the chain is the slowest? 
+
+Lets use Jaeger to inspect our traffic. 
+
+
+#### Tracing jaeger and traefik
+
+What if the problem lies between the load balancer and our application? Lets add opentracing to traefik. 
 
 ~~~Shell
 #manual edit the configmap
@@ -170,13 +174,6 @@ kubectl edit configmap -n kube-system traefik
 kubectl delete pod -n kube-system $(kubectl -n kube-system get pods -l "app=traefik,release=traefik" -o jsonpath="{.items[0].metadata.name}")
 ~~~
 
-
-
-## Closing remarks
-K3s is not HA ready yet - but it makes a great little tool for testing kubernetes (and it runs a raspberry pi).
-K3s has an open port for the api by default, please check if running anything in the public cloud. 
-
-
 ## Links
 Below you find links to the things we've used in this demo:
 
@@ -184,15 +181,21 @@ Below you find links to the things we've used in this demo:
 
 - https://github.com/alexellis/k3sup
 
-- https://quarkus.io/
-
-- https://github.com/Cloud-Native-Aalborg/Meetup-2
-
-- https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/
+- https://www.terraform.io/
 
 - https://fluxcd.io/
 
+- https://prometheus.io/
+
+- https://grafana.com/
+
+- https://www.jaegertracing.io/
+
 - https://docs.traefik.io/master/observability/tracing/jaeger/
+
+- https://quarkus.io/
+
+- https://github.com/Cloud-Native-Aalborg/Meetup-2
 
 - https://cloud.drone.io/Cloud-Native-Aalborg/Meetup-2/
 
