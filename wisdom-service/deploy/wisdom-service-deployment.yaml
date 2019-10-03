@@ -41,16 +41,6 @@ spec:
         - name: JAEGER_SAMPLER_PARAM
           value: '1'
         imagePullPolicy: IfNotPresent
-        livenessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /health/live
-            port: 8081
-            scheme: HTTP
-          initialDelaySeconds: 1
-          periodSeconds: 5
-          successThreshold: 1
-          timeoutSeconds: 5
         readinessProbe:
           failureThreshold: 3
           httpGet:

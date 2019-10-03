@@ -18,7 +18,7 @@ public interface WisdomClient {
     @GET
     @Path("/random")
     @Produces(MediaType.APPLICATION_JSON)
-    @Timeout(unit = ChronoUnit.MILLIS, value = 50)
+    @Timeout(unit = ChronoUnit.MILLIS, value = 250)
     @Retry(maxRetries = 3)
     Response random();
 
