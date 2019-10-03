@@ -115,14 +115,13 @@ kubectl --namespace kube-system patch deploy tiller-deploy \
 
 helm repo add loki https://grafana.github.io/loki/charts
 helm repo update
-helm install loki/loki-stack -n loki
-helm install stable/grafana -n loki-grafana
+helm install loki/loki-stack -n loki --namespace monitoring
+helm install stable/grafana -n loki-grafana --namespace monitoring
 
 #expose grafana
-kubectl port-forward loki-grafana-<pod-name> 3000
+export POD_NAME=$(kubectl get pods --namespace monitoring -l "app=grafana,release=loki-grafana" -o jsonpath="{.items[0].metadata.name}")
+kubectl --namespace monitoring port-forward $POD_NAME 3000
 
-#get admin password
-kubectl get secret --namespace default loki-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 
 #add datasource loki
 http://loki:3100
