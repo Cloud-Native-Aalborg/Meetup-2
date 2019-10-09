@@ -127,7 +127,7 @@ kubectl --namespace monitoring port-forward $POD_NAME 3000
 http://loki:3100
 
 #add datasource prometheus
-http://prometheus.monitoring:9090
+http://prometheus:9090
 ~~~
 
 ### Checking logs with Loki
