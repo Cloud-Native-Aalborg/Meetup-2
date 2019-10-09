@@ -104,6 +104,11 @@ kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisione
 Prometheus and Jaeger has already been installed by FluxCD in our cluster. We'd also like to run grafana, so lets 
 install that using helm.
 
+
+
+
+
+
 ~~~Shell
 helm init
 
