@@ -106,9 +106,6 @@ install that using helm.
 
 
 
-
-
-
 ~~~Shell
 helm init
 
