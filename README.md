@@ -3,13 +3,13 @@
 [![Build Status](https://cloud.drone.io/api/badges/Cloud-Native-Aalborg/Meetup-2/status.svg)](https://cloud.drone.io/Cloud-Native-Aalborg/Meetup-2)
 
 This document contains the commands used in the "Automated install and observability" talk. 
-Feel free to let me know if you have improvments or catch any typos.
+Feel free to let me know if you have any improvements or catch any typos.
 
 
 
 ## Steps to setup cluster
 
-Last time we allocated the VMs manually using the cloud ui. This time we will use Terraform to provision the VMs
+Last time we allocated the VMs manually using the cloud UI. This time we will use Terraform to provision the VMs
 for us, so that we essentially have our infrastructure-as-code. 
 
 ~~~Shell
@@ -27,8 +27,11 @@ terraform destroy
 This will provision the VMs for us, but also run k3sup to get us running kubernetes, apply our secrets file, 
 join the worker nodes and a bit more. 
 
-Nice and simple eh?
+Nice and simple eh? - The use of terraform here is kept simple on purpose for the demo. 
 
+#### Additional information regarding terraform
+If you work with terraform in your project you will probably want to use 
+`terraform plan -out <planfile.out>`  and then use `terraform apply <planfile.out>` instead of doing the apply directly. The additional step allows you to see what actions terraform is performing. See more at : https://www.terraform.io/docs/commands/plan.html and in the same way you would probably want to use apply even on the destroy situation, where `terraform plan -out <destroyplanfile.out> -destroy` and inspect that before applying the destroy `terraform apply <destroyplanfile.out>`. There is a lot of things you can do with terraform and lots of information on how to use it. 
 
 ### FluxCD
 
@@ -104,8 +107,6 @@ kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisione
 Prometheus and Jaeger has already been installed by FluxCD in our cluster. We'd also like to run grafana, so lets 
 install that using helm.
 
-
-
 ~~~Shell
 helm init
 
@@ -115,6 +116,13 @@ kubectl create clusterrolebinding tiller-cluster-rule \
 kubectl --namespace kube-system patch deploy tiller-deploy \
  -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}' 
 
+~~~
+
+
+#### Additional information regarding helm
+If you work with helm and do not like having tiller with these credentials in your cluster, you might want to have a look at how you can use helm without tiller, and use `helm template`instead, you can apply this directly as is done above, you may however consider to emit the result and check that into git, that allows you to see changes from one version to another and you have an audit trail. 
+
+~~~Shell
 helm repo add loki https://grafana.github.io/loki/charts
 helm repo update
 helm install loki/loki-stack -n loki --namespace monitoring
@@ -183,6 +191,8 @@ Below you find links to the things we've used in this demo:
 - https://github.com/alexellis/k3sup
 
 - https://www.terraform.io/
+
+- https://helm.sh/docs/
 
 - https://fluxcd.io/
 
