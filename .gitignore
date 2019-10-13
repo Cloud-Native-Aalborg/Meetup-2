@@ -5,3 +5,6 @@ main.tf
 terraform.tfstate
 terraform.tfstate.backup
 .terraform
+*/.factorypath
+.project
+.settings
