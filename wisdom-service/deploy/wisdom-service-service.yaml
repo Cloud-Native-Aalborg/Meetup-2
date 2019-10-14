@@ -4,6 +4,8 @@ apiVersion: v1
 metadata:
   name: wisdom-service
   namespace: apps
+  annotations:
+    openapi-map/scrape: 'true'
 spec:
   selector:
     app: wisdom-service
