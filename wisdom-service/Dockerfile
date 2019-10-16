@@ -1,4 +1,4 @@
-FROM mejlholm/quarkus-native-builder:2.0.1 AS build
+FROM mejlholm/quarkus-native-builder:2.0.2 AS build
 
 COPY pom.xml pom.xml
 
