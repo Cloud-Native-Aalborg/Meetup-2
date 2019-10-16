@@ -6,6 +6,8 @@ metadata:
   namespace: apps
   annotations:
     openapi-map/scrape: 'true'
+    openapi-map/language: 'java'
+    openapi-map/runtime: 'quarkus'
 spec:
   selector:
     app: wisdom-service
