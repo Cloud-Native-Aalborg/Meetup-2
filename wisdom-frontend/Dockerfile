@@ -1,24 +1,15 @@
-FROM mejlholm/quarkus-native-builder:2.0.6 AS build
-
-COPY pom.xml pom.xml
-
-#download dependencies for caching
-RUN mvn -B org.apache.maven.plugins:maven-dependency-plugin:3.1.1:go-offline
-
-#copy the rest and build it
-COPY src src
-RUN mvn verify -Pnative
-
-
+FROM quay.io/quarkus/centos-quarkus-maven:19.2.1 AS build
+COPY src /usr/src/app/src
+COPY pom.xml /usr/src/app
+USER root
+RUN chown -R quarkus /usr/src/app
+USER quarkus
+RUN mvn -f /usr/src/app/pom.xml -Pnative clean package
 
 #base image for deployment
 FROM registry.access.redhat.com/ubi8/ubi-minimal
-
 WORKDIR /work/
-
-COPY --from=build target/*-runner /application
-COPY --from=build /tmp/ssl-libs/ /work/
+COPY --from=build /usr/src/app/target/*-runner /work/application
 RUN chmod 775 /work
-
 EXPOSE 8080
-CMD ["/application", "-Dquarkus.http.host=0.0.0.0", "-Djava.library.path=/work/lib", "-Djavax.net.ssl.trustStore=/work/cacerts"]
+CMD ["./application", "-Dquarkus.http.host=0.0.0.0"]
