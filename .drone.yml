@@ -6,8 +6,7 @@ steps:
     image: plugins/docker
     settings:
       repo: mejlholm/wisdom-service
-      username:
-        from_secret: docker_hub_username
+      username: mejlholm
       password:
         from_secret: docker_hub_password
       dockerfile: wisdom-service/Dockerfile
@@ -20,8 +19,7 @@ steps:
     image: plugins/docker
     settings:
       repo: mejlholm/wisdom-frontend
-      username:
-        from_secret: docker_hub_username
+      username: mejlholm
       password:
         from_secret: docker_hub_password
       dockerfile: wisdom-frontend/Dockerfile
